@@ -5,7 +5,7 @@
 # Ignore Mac OS X folder information file - This should not be needed in SCM
 .DS_Store
 
-# Ignore and container runtime folders
+# Ignore and container volume folders
 **-volume/
 
 # .dockerignore can simply be a symlink -- need to lookup podman ignore
