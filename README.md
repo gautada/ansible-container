@@ -1,2 +1,4 @@
 # ansible-container
-A web based interface for ansible as a service
+
+Ansible delivers simple IT automation that ends repetitive tasks and frees up DevOps teams for more strategic work.
+
