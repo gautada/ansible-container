@@ -19,9 +19,7 @@ LABEL description="Container that provides an ansible cli environment."
 # ╰――――――――――――――――――――╯
 RUN /bin/mkdir /etc/ansible \
  && /bin/ln -s /opt/ansible/hosts /etc/ansible/hosts \
- && /bin/ln -s /opt/ansible/private.key /etc/ansible/private.key \
- && /bin/mkdir /etc/ansible/playbooks \
- && git clone 
+ && /bin/ln -s /opt/ansible/private.key /etc/ansible/private.key
  
 # ╭――――――――――――――――――――╮
 # │ ENTRYPOINT         │
@@ -31,13 +29,15 @@ COPY 10-ep-container.sh /etc/container/entrypoint.d/10-ep-container.sh
 # ╭――――――――――――――――――――╮
 # │ PACKAGES           │
 # ╰――――――――――――――――――――╯
-RUN /sbin/apk add --no-cache ansible build-base npm openssh-client openssh yarn
-# build-base git nodejs npm openssh-client openssh python3 py3-pip yarn
+RUN /sbin/apk add --no-cache ansible build-base git npm openssh-client openssh yarn
+# Dropped: nodejs python3 py3-pip yarn
 
 # ╭――――――――――――――――――――╮
 # │ CONFIGURE          │
 # ╰――――――――――――――――――――╯
-
+RUN cd /etc/ansible \
+ && /usr/bin/git clone https://github.com/gautada/ansible-container.git repo \
+ && /bin/ln -s /etc/ansible/repo/playbooks /etc/ansible/playbooks
 
 # mkdir .ssh ; mv public.key ~/.ssh/authorized_keys ; chmod 700 ~/.ssh ;  chmod 640 ~/.ssh/authorized_keys
 # ╭――――――――――――――――――――╮
@@ -45,6 +45,7 @@ RUN /sbin/apk add --no-cache ansible build-base npm openssh-client openssh yarn
 # ╰――――――――――――――――――――╯
 COPY wheel-sshd /etc/container/wheel.d/wheel-sshd
 COPY wheel-ssh-keygen /etc/container/wheel.d/wheel-ssh-keygen
+COPY wheel-git /etc/container/wheel.d/wheel-git
 
 # ╭――――――――――――――――――――╮
 # │ USER               │
