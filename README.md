@@ -11,4 +11,6 @@ Ansible delivers simple IT automation that ends repetitive tasks and frees up De
 - setup ~/.kube file
 
 
+This is the command to update the node software.
+
 sudo snap refresh microk8s --channel=1.25/stable
