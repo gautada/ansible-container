@@ -35,17 +35,18 @@ RUN /sbin/apk add --no-cache ansible build-base git npm openssh-client openssh y
 # ╭――――――――――――――――――――╮
 # │ CONFIGURE          │
 # ╰――――――――――――――――――――╯
-RUN cd /etc/ansible \
- && /usr/bin/git clone https://github.com/gautada/ansible-container.git repo \
- && /bin/ln -s /etc/ansible/repo/playbooks /etc/ansible/playbooks
-
+# RUN cd /etc/ansible \
+#  && /usr/bin/git clone https://github.com/gautada/ansible-container.git repo \
+# && /bin/ln -s /etc/ansible/repo/playbooks /etc/ansible/playbooks
 # mkdir .ssh ; mv public.key ~/.ssh/authorized_keys ; chmod 700 ~/.ssh ;  chmod 640 ~/.ssh/authorized_keys
+
+
 # ╭――――――――――――――――――――╮
 # │ SUDO               │
 # ╰――――――――――――――――――――╯
 COPY wheel-sshd /etc/container/wheel.d/wheel-sshd
 COPY wheel-ssh-keygen /etc/container/wheel.d/wheel-ssh-keygen
-COPY wheel-git /etc/container/wheel.d/wheel-git
+# COPY wheel-git /etc/container/wheel.d/wheel-git
 
 # ╭――――――――――――――――――――╮
 # │ USER               │
@@ -69,4 +70,6 @@ EXPOSE 8080
 # ╭――――――――――――――――――――╮
 # │ CONFIGURE          │
 # ╰――――――――――――――――――――╯
-RUN /usr/bin/yarn global add wetty 
+RUN /usr/bin/yarn global add wetty
+RUN /bin/mkdir /home/ansible/playbooks
+COPY playbooks/adhoc/* /home/ansible/playbooks/

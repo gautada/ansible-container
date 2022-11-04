@@ -1,0 +1,36 @@
+---
+
+- hosts: nodes
+  become: true
+  serial: "25%"
+  tasks:
+  
+  - name: "Update APT Repositories"
+    ansible.builtin.apt:
+      update_cache: yes
+      
+  - name: Cordon Kubernetes Node
+    ansible.builtin.shell: /snap/bin/kubectl --kubeconfig /home/ansible/.kube/config cordon $(hostname)
+ 
+  - name: Drain Kubernetes Node
+    ansible.builtin.shell:
+      cmd: /snap/bin/kubectl --kubeconfig /home/ansible/.kube/config drain $(hostname) --delete-emptydir-data --force --ignore-daemonsets
+      
+  - name: Update APT Packages
+    ansible.builtin.apt:
+      name: "*"
+      state: latest
+      
+  - name: Reboot the host
+    ansible.builtin.reboot:
+      reboot_command: /usr/sbin/shutdown --reboot 0
+    # reboot_timeout: 3600
+    # reboot_command: /usr/sbin/reboot --force --reboot
+    
+  - name: Wait (3 minutes)
+    ansible.builtin.wait_for:
+      timeout: 180
+    
+  - name: Uncordon Node
+    ansible.builtin.shell:
+      cmd: /snap/bin/kubectl --kubeconfig /home/ansible/.kube/config uncordon $(hostname)
